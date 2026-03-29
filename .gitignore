@@ -5,8 +5,25 @@ backend/node_modules/
 
 # Environment
 .env
+*.env.*
 *.pem
 
 # Build
 dist/
 build/
+
+# Terraform
+
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+*.tfplan
+
+**/.terraform/
+
+crash.log
+crash.*.log
+
+*.secret.tfvars
+secrets.tfvars

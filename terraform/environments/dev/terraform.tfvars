@@ -1,0 +1,6 @@
+aws_region      = "eu-west-1"
+project_name    = "jerney"
+environment     = "dev"
+cluster_name    = "jerney-eks-dev"
+cluster_version = "1.32"
+vpc_cidr        = "10.0.0.0/16"
