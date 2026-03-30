@@ -1,6 +1,15 @@
 terraform {
   required_version = ">= 1.7.0"
 
+
+ backend "s3" {
+    bucket         = "jerney-terraform-state-2026"
+    key            = "environments/dev/terraform.tfstate"
+    region         = "eu-west-1"
+    encrypt        = true
+    dynamodb_table = "jerney-terraform-locks"
+  }
+  
   required_providers {
     aws = {
       source  = "hashicorp/aws"
