@@ -32,7 +32,7 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: jerney-frontend
-          image: safhadd/jerney-backend:latest
+          image: safhadd/jerney-frontend:latest
           ports:
             - containerPort: 80
               protocol: TCP
