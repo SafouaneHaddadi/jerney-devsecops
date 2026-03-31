@@ -1,0 +1,56 @@
+# ---- ServiceAccounts ----
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jerney-db-sa
+  namespace: jerney
+  labels:
+    app.kubernetes.io/part-of: jerney
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jerney-backend-sa
+  namespace: jerney
+  labels:
+    app.kubernetes.io/part-of: jerney
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jerney-frontend-sa
+  namespace: jerney
+  labels:
+    app.kubernetes.io/part-of: jerney
+
+---
+# ---- Role: backend can read secrets ----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jerney-backend-role
+  namespace: jerney
+spec:
+  rules:
+    - apiGroups: [""]
+      resources: ["secrets"]
+      verbs: ["get"]
+      resourceNames: ["jerney-db-secret"]
+
+---
+# ---- RoleBinding: assign role to backend ServiceAccount ----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jerney-backend-rolebinding
+  namespace: jerney
+subjects:
+  - kind: ServiceAccount
+    name: jerney-backend-sa
+    namespace: jerney
+roleRef:
+  kind: Role
+  name: jerney-backend-role
+  apiGroup: rbac.authorization.k8s.io
