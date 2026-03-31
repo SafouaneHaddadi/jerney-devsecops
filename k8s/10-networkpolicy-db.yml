@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: jerney-db-network-policy
+  namespace: jerney
+  annotations:
+    description: "Only backend can access the database"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: jerney-db
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: jerney-backend
+      ports:
+        - port: 5432
+          protocol: TCP
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP

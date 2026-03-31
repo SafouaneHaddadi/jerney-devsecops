@@ -27,3 +27,6 @@ crash.*.log
 
 *.secret.tfvars
 secrets.tfvars
+
+# K8s
+*.secret.yaml
