@@ -31,4 +31,14 @@ module "eks" {
   ]
 
   enable_cluster_creator_admin_permissions = true
+
+  
+}
+
+# EBS CSI driver required for k8s to provision EBS volumes
+resource "aws_eks_addon" "ebs_csi" {
+  cluster_name = module.eks.cluster_name
+  addon_name   = "aws-ebs-csi-driver"
+
+  depends_on = [module.eks]
 }
