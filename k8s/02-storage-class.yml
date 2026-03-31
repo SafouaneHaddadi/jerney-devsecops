@@ -4,7 +4,7 @@ metadata:
   name: jerney-ebs-storage-class
   labels:
     app.kubernetes.io/part-of: jerney
-provisioner: ebs.csi.aws.com
+provisioner: ebs.csi.eks.amazonaws.com
 parameters:
   type: gp3
   encrypted: "true"
