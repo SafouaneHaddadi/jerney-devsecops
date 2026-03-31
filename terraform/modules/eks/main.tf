@@ -40,11 +40,8 @@ data "tls_certificate" "eks" {
   url = module.eks.cluster_oidc_issuer_url
 }
 
-# Create the OIDC provider in AWS IAM
-resource "aws_iam_openid_connect_provider" "eks" {
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
-  url             = module.eks.cluster_oidc_issuer_url
+data "aws_iam_openid_connect_provider" "eks" {
+  url = module.eks.cluster_oidc_issuer_url
 }
 
 # Create the IAM role that the driver will use
@@ -57,7 +54,7 @@ resource "aws_iam_role" "ebs_csi" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.eks.arn
+          Federated = data.aws_iam_openid_connect_provider.eks.arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
