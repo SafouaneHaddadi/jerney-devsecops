@@ -8,6 +8,8 @@ provisioner: ebs.csi.aws.com
 parameters:
   type: gp3
   encrypted: "true"
+  csi.storage.k8s.io/fstype: ext4
+  zones: eu-west-1a,eu-west-1b
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
