@@ -32,12 +32,11 @@ kind: Role
 metadata:
   name: jerney-backend-role
   namespace: jerney
-spec:
-  rules:
-    - apiGroups: [""]
-      resources: ["secrets"]
-      verbs: ["get"]
-      resourceNames: ["jerney-db-secret"]
+rules:                    
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+    resourceNames: ["jerney-db-secret"]
 
 ---
 # ---- RoleBinding: assign role to backend ServiceAccount ----
