@@ -74,9 +74,9 @@ spec:
               command:
                 - pg_isready
                 - -U
-                - $(POSTGRES_USER)
+                - jerney_user
                 - -d
-                - $(POSTGRES_DB)
+                - jerney_db
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 5
@@ -86,9 +86,9 @@ spec:
               command:
                 - pg_isready
                 - -U
-                - $(POSTGRES_USER)
+                - jerney_user
                 - -d
-                - $(POSTGRES_DB)
+                - jerney_db
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 3
