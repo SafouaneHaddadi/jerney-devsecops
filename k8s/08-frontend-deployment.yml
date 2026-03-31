@@ -49,8 +49,8 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop:
-                - ALL
+              drop: ["ALL"]             
+              add: ["NET_BIND_SERVICE"]
           livenessProbe:
             httpGet:
               path: /
