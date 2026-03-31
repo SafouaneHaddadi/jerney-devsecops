@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: jerney-db
   namespace: jerney
@@ -8,9 +8,8 @@ metadata:
     app.kubernetes.io/part-of: jerney
     app.kubernetes.io/component: database
 spec:
+  serviceName: jerney-db
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: jerney-db
@@ -21,23 +20,22 @@ spec:
         app.kubernetes.io/part-of: jerney
         app.kubernetes.io/component: database
     spec:
-      automountServiceAccountToken: false
       serviceAccountName: jerney-db-sa
+      automountServiceAccountToken: false
       tolerations:
         - key: "karpenter.sh/disrupted"
           operator: "Exists"
           effect: "NoSchedule"
       containers:
-        - name: jerney-db
+        - name: postgres
           image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
           envFrom:
             - secretRef:
                 name: jerney-db-secret
-          ports:
-            - containerPort: 5432
-              protocol: TCP
           volumeMounts:
-            - name: jerney-db-storage
+            - name: data
               mountPath: /var/lib/postgresql/data
               subPath: postgres-data
           resources:
@@ -52,14 +50,16 @@ spec:
             runAsUser: 999
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
           livenessProbe:
             exec:
               command:
                 - pg_isready
                 - -U
-                - jerney_user
+                - $(POSTGRES_USER)
                 - -d
-                - jerney_db
+                - $(POSTGRES_DB)
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 5
@@ -69,14 +69,22 @@ spec:
               command:
                 - pg_isready
                 - -U
-                - jerney_user
+                - $(POSTGRES_USER)
                 - -d
-                - jerney_db
+                - $(POSTGRES_DB)
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
-      volumes:
-        - name: jerney-db-storage
-          persistentVolumeClaim:
-            claimName: jerney-db-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/part-of: jerney
+          app.kubernetes.io/component: database
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: jerney-ebs-storage-class
+        resources:
+          requests:
+            storage: 10Gi
