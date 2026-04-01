@@ -131,6 +131,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase image name
+        id: image
+        run: echo "name=$(echo ${{ env.REGISTRY }}/${{ github.repository }}/jerney-${{ matrix.component }}:latest | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
