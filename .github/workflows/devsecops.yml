@@ -208,15 +208,19 @@ jobs:
         id: sha
         run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
+      - name: Lowercase image names
+        id: images
+        run: |
+          echo "backend=$(echo ${BACKEND_IMAGE} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          echo "frontend=$(echo ${FRONTEND_IMAGE} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Update backend image tag
         run: |
-          sed -i "s|image: ghcr.io/.*/jerney-backend:.*|image: ${BACKEND_IMAGE}:${{ steps.sha.outputs.short }}|g" k8s/06-backend-deployment.yml
-          echo "Backend image updated to: ${BACKEND_IMAGE}:${{ steps.sha.outputs.short }}"
+          sed -i "s|image: ghcr.io/.*/jerney-backend:.*|image: ${{ steps.images.outputs.backend }}:${{ steps.sha.outputs.short }}|g" k8s/06-backend-deployment.yml
 
       - name: Update frontend image tag
         run: |
-          sed -i "s|image: ghcr.io/.*/jerney-frontend:.*|image: ${FRONTEND_IMAGE}:${{ steps.sha.outputs.short }}|g" k8s/08-frontend-deployment.yml
-          echo "Frontend image updated to: ${FRONTEND_IMAGE}:${{ steps.sha.outputs.short }}"
+          sed -i "s|image: ghcr.io/.*/jerney-frontend:.*|image: ${{ steps.images.outputs.frontend }}:${{ steps.sha.outputs.short }}|g" k8s/08-frontend-deployment.yml
 
       - name: Commit and push manifest updates
         run: |
