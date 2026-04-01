@@ -32,14 +32,23 @@ resource "helm_release" "argocd" {
 resource "null_resource" "wait_for_argocd_crd" {
   depends_on = [helm_release.argocd]
 
+  triggers = {
+    helm_version = helm_release.argocd.version
+  }
+
   provisioner "local-exec" {
     command = <<-EOT
       echo "Waiting for ArgoCD CRD..."
-      while ! kubectl get crd applications.argoproj.io > /dev/null 2>&1; do
-        echo "CRD not ready yet, waiting 5 seconds..."
+      for i in {1..60}; do
+        if kubectl get crd applications.argoproj.io > /dev/null 2>&1; then
+          echo "ArgoCD CRD is ready!"
+          exit 0
+        fi
+        echo "Attempt $i/60: CRD not ready yet, waiting 5 seconds..."
         sleep 5
       done
-      echo "ArgoCD CRD is ready!"
+      echo "ERROR: ArgoCD CRD not ready after 5 minutes"
+      exit 1
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
