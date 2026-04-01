@@ -45,6 +45,7 @@ spec:
               echo "Database is ready"
       containers:
         - name: jerney-backend
+          imagePullPolicy: Always
           image:  ghcr.io/safouanehaddadi/jerney-devsecops/jerney-backend:latest
           ports:
             - containerPort: 5000
@@ -82,7 +83,7 @@ spec:
               cpu: "300m"
           securityContext:
             runAsNonRoot: true
-            runAsUser: 1000
+            runAsUser: 10001  
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
