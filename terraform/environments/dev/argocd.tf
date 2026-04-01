@@ -29,6 +29,22 @@ resource "helm_release" "argocd" {
   ]
 }
 
+resource "null_resource" "wait_for_argocd_crd" {
+  depends_on = [helm_release.argocd]
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      echo "Waiting for ArgoCD CRD..."
+      while ! kubectl get crd applications.argoproj.io > /dev/null 2>&1; do
+        echo "CRD not ready yet, waiting 5 seconds..."
+        sleep 5
+      done
+      echo "ArgoCD CRD is ready!"
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
 # define the ArgoCD application 
 resource "kubernetes_manifest" "argocd_application" {
   manifest = {
@@ -66,15 +82,6 @@ resource "kubernetes_manifest" "argocd_application" {
   }
 
   depends_on = [
-    helm_release.argocd,
-    time_sleep.wait_for_argocd_crd
+    null_resource.wait_for_argocd_crd
     ]
-}
-
-# wait for the ArgoCD CRD to be installed
-resource "time_sleep" "wait_for_argocd_crd" {
-  create_duration = "30s"
-  depends_on = [
-    helm_release.argocd
-  ]
 }
