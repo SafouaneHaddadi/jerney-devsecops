@@ -4,6 +4,7 @@
   "description": "Jerney Blog Platform - Backend API",
   "main": "src/index.js",
   "scripts": {
+    "lint": "eslint src/ --ext .js",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
