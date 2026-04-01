@@ -1,4 +1,3 @@
-# ====== BUILD STAGE ========
 FROM node:20-alpine AS build
 
 WORKDIR /app
@@ -7,13 +6,12 @@ COPY package*.json ./
 
 RUN npm ci --only=production && npm cache clean --force
 
-# ======== PRODUCTION STAGE =======
 FROM node:20-alpine AS production
 
 RUN addgroup -S appgroup && \
     adduser -S appuser -G appgroup
 
-RUN apk add --no-cache dumb-init
+RUN apk add --no-cache dumb-init=1.2.5-r4
 
 WORKDIR /app
 
