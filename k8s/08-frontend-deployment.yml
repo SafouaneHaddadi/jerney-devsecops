@@ -49,6 +49,8 @@ spec:
             runAsUser: 10002
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
+            seccompProfile: 
+              type: RuntimeDefault
             capabilities:
               drop: ["ALL"]             
           livenessProbe:

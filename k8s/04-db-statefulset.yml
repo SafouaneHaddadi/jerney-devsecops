@@ -46,6 +46,7 @@ spec:
           effect: "NoSchedule"
       containers:
         - name: postgres
+          imagePullPolicy: Always
           image: postgres:16-alpine
           ports:
             - containerPort: 5432
@@ -68,6 +69,8 @@ spec:
             runAsUser: 10000
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
+            seccompProfile: 
+              type: RuntimeDefault
             capabilities:
               drop: ["ALL"]
           livenessProbe:
