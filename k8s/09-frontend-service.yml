@@ -6,6 +6,8 @@ metadata:
   namespace: jerney
   annotations:
     description: "Exposes the application to the internet via AWS load balancer"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
   labels:
     app.kubernetes.io/name: jerney-frontend
     app.kubernetes.io/part-of: jerney
