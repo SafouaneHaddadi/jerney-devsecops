@@ -45,7 +45,7 @@ spec:
               echo "Database is ready"
       containers:
         - name: jerney-backend
-          image: safhadd/jerney-backend:latest
+          image:  ghcr.io/safouanehaddadi/jerney-devsecops/jerney-backend:latest
           ports:
             - containerPort: 5000
               protocol: TCP
