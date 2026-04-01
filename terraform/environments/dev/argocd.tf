@@ -54,43 +54,4 @@ resource "null_resource" "wait_for_argocd_crd" {
   }
 }
 
-# define the ArgoCD application 
-resource "kubernetes_manifest" "argocd_application" {
-  manifest = {
-    apiVersion = "argoproj.io/v1alpha1"
-    kind       = "Application"
-    metadata = {
-      name      = "jerney-blog"
-      namespace = "argocd"
-      labels = {
-        "app.kubernetes.io/part-of" = "jerney"
-      }
-    }
-    spec = {
-      project = "default"
-      source = {
-        repoURL        = "https://github.com/SafouaneHaddadi/jerney-devsecops"
-        targetRevision = "main"
-        path           = "k8s"
-      }
-      destination = {
-        server    = "https://kubernetes.default.svc"
-        namespace = "jerney"
-      }
-      syncPolicy = {
-        automated = {
-          prune    = true
-          selfHeal = true
-        }
-        syncOptions = [
-          "CreateNamespace=true",
-          "ApplyOutOfSyncOnly=true"
-        ]
-      }
-    }
-  }
 
-  depends_on = [
-    null_resource.wait_for_argocd_crd
-    ]
-}
