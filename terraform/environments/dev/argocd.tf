@@ -65,6 +65,16 @@ resource "kubernetes_manifest" "argocd_application" {
     }
   }
 
-  # wait for the Helm release to be created
-  depends_on = [helm_release.argocd]
+  depends_on = [
+    helm_release.argocd,
+    time_sleep.wait_for_argocd_crd
+    ]
+}
+
+# wait for the ArgoCD CRD to be installed
+resource "time_sleep" "wait_for_argocd_crd" {
+  create_duration = "30s"
+  depends_on = [
+    helm_release.argocd
+  ]
 }
