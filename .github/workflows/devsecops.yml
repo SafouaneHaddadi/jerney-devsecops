@@ -146,3 +146,29 @@ jobs:
           severity: "CRITICAL,HIGH"
           timeout: "10m"
         continue-on-error: true        
+     
+  iac-scan:
+    name: "IaC Security Scan"
+    runs-on: ubuntu-latest
+    needs: [lint, image-scan]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Run Checkov on Terraform
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terraform/
+          framework: terraform
+          soft_fail: true
+          output_format: cli
+
+      - name: Run Checkov on Kubernetes manifests
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: k8s/
+          framework: kubernetes
+          soft_fail: true
+          output_format: cli  
