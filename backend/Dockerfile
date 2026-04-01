@@ -11,7 +11,7 @@ FROM node:20-alpine AS production
 RUN addgroup -S appgroup && \
     adduser -S appuser -G appgroup
 
-RUN apk add --no-cache dumb-init=1.2.5-r4
+RUN apk add --no-cache dumb-init=1.2.5-r3
 
 WORKDIR /app
 
