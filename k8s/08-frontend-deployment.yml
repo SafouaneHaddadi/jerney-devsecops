@@ -33,7 +33,7 @@ spec:
       containers:
         - name: jerney-frontend
           imagePullPolicy: Always
-          image: ghcr.io/safouanehaddadi/jerney-devsecops/jerney-frontend:c80f5a9
+          image: ghcr.io/safouanehaddadi/jerney-devsecops/jerney-frontend:7919b00
           ports:
             - containerPort: 8080
               protocol: TCP
