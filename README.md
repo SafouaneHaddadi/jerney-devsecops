@@ -260,3 +260,6 @@ terraform destroy -auto-approve
 ```
 
 ---
+## What's Next
+
+I'm planning to add an observability stack to make the project more complete — Prometheus to collect metrics from the cluster and the pods, Grafana to visualize them with dashboards, and Loki for log aggregation. The goal is to be able to monitor the health of the application in real time and set up alerts, which is something missing from the current setup.
