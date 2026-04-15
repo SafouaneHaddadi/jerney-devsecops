@@ -14,31 +14,58 @@ The application is a simple blog where users can read and write posts. It's spli
 
 ## Architecture
 
-```
-Developer
-    |
-    |  git push
-    v
-GitHub Actions (CI Pipeline)
-    |
-    |-- Stage 1: ESLint (code quality)
-    |-- Stage 2: npm audit (dependency scan)
-    |-- Stage 3: Docker Build & Push to GHCR
-    |-- Stage 4: Trivy (image vulnerability scan)
-    |-- Stage 5: Checkov (Terraform + K8s scan)
-    |-- Stage 6: Hadolint (Dockerfile lint)
-    |-- Stage 7: Update K8s manifests (new image tag)
-                |
-                |  git commit [skip ci]
-                v
-            ArgoCD (GitOps)
-                |
-                v
-            AWS EKS Cluster
-                |
-                |-- jerney-frontend (Nginx, 2 replicas)
-                |-- jerney-backend (Node.js, 2 replicas)
-                |-- jerney-db (PostgreSQL, StatefulSet)
+```mermaid
+flowchart LR
+    %% Developer
+    Dev([Developer]) -->|git push| GH
+
+    %% CI Pipeline
+    subgraph CI["GitHub Actions (CI Pipeline)"]
+        GH["GitHub Repo"]
+        Lint["ESLint"]
+        Audit["npm audit"]
+        Build["Docker Build"]
+        Push["Push to GHCR"]
+        Trivy["Trivy Scan"]
+        Checkov["Checkov Scan"]
+        Hadolint["Hadolint"]
+        Update["Update K8s Manifests"]
+
+        GH --> Lint --> Audit --> Build --> Push --> Trivy
+        Trivy --> Checkov
+        Trivy --> Hadolint
+        Checkov --> Update
+        Hadolint --> Update
+    end
+
+    %% Registry
+    GHCR["GHCR (Container Registry)"]
+
+    %% GitOps
+    subgraph GitOps["GitOps (CD)"]
+        Argo["ArgoCD"]
+    end
+
+    %% AWS
+    subgraph AWS["AWS Cloud"]
+        subgraph EKS["EKS Cluster"]
+            Front["Frontend (React + Nginx)"]
+            Back["Backend (Node.js)"]
+            DB["PostgreSQL (StatefulSet)"]
+        end
+    end
+
+    %% Flow
+    Build --> GHCR
+    GHCR -->|image pull| EKS
+
+    Update -->|git commit| GH
+    GH -->|watch repo| Argo
+    Argo -->|sync| EKS
+
+    %% App traffic
+    Front --> Back
+    Back --> DB
 ```
 
 ---
